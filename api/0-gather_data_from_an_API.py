@@ -1,29 +1,19 @@
 #!/usr/bin/python3
-"""
-gather_data_from_an_API
-"""
+"""Returns to-do list information for a given employee ID."""
+import requests
+import sys
+
 if __name__ == "__main__":
-    import requests
-    import sys
+    api_url = "https://jsonplaceholder.typicode.com/"
+    user = requests.get(api_url + "users/{}".format(sys.argv[1])).json()
+    todos = requests.get(
+        api_url + "todos", params={"userId": sys.argv[1]}).json()
 
-    user_id = sys.argv[1]
-    url_employee = "https://jsonplaceholder.typicode.com/users/{}"\
-        .format(user_id)
-    url_todo = "https://jsonplaceholder.typicode.com/todos?userId={}"\
-        .format(user_id)
-    req_employee = requests.get(url_employee)
-    EN = req_employee.json().get('name')
-    req_todo = requests.get(url_todo)
-    TOTAL_T = len(req_todo.json())
-    TASKS = 0
-    NUMT = 0
-    lists = []
-    while TASKS < TOTAL_T:
-        if req_todo.json()[TASKS].get('completed') is True:
-            lists.append(req_todo.json()[TASKS].get('title'))
-            NUMT += 1
-        TASKS += 1
-
-    print("Employee {} is done with tasks({}/{}):".format(EN, NUMT, TOTAL_T))
-    for t in lists:
-        print("\t {}".format(t))
+    completed = []
+    for task in todos:
+        if task.get("completed") is True:
+            completed.append(task.get("title"))
+    print("Employee {} is done with tasks({}/{}):".format(
+        user.get("name"), len(completed), len(todos)))
+    for complete in completed:
+        print("\t {}".format(complete))
