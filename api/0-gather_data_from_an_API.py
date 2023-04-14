@@ -1,42 +1,29 @@
 #!/usr/bin/python3
 """
-gather_data_from_an_API
+Module 0-gather_data_from_an_API
 """
-import requests
-import sys
+if __name__ == "__main__":
+    import requests
+    import sys
 
-employee_id = sys.argv[1]
-url = "https://jsonplaceholder.typicode.com/todos?userId=" + str(employee_id)
+    user_id = sys.argv[1]
+    url_employee = "https://jsonplaceholder.typicode.com/users/{}"\
+        .format(user_id)
+    url_todo = "https://jsonplaceholder.typicode.com/todos?userId={}"\
+        .format(user_id)
+    req_employee = requests.get(url_employee)
+    EN = req_employee.json().get('name')
+    req_todo = requests.get(url_todo)
+    TOTAL_T = len(req_todo.json())
+    TASKS = 0
+    NUMT = 0
+    lists = []
+    while TASKS < TOTAL_T:
+        if req_todo.json()[TASKS].get('completed') is True:
+            lists.append(req_todo.json()[TASKS].get('title'))
+            NUMT += 1
+        TASKS += 1
 
-response = requests.get(url)
-
-if response.status_code != 200:
-    print("Error: Could not retrieve TODO list for employee ID", employee_id)
-    sys.exit(1)
-
-todos = response.json()
-
-completed_tasks = []
-total_tasks = len(todos)
-
-for todo in todos:
-    if todo["completed"]:
-        completed_tasks.append(todo["title"])
-
-num_completed_tasks = len(completed_tasks)
-
-employee_name = todos[0]["userId"]
-url = "https://jsonplaceholder.typicode.com/users/" + str(employee_name)
-
-response = requests.get(url)
-if response.status_code != 200:
-    print("Error: Could not retrieve employee name for ID", employee_name)
-    sys.exit(1)
-
-employee_data = response.json()
-employee_name = employee_data["name"]
-
-print("Employee", employee_name, "is done with tasks({}/{}):".format(num_completed_tasks, total_tasks))
-
-for task in completed_tasks:
-    print("\t", task)
+    print("Employee {} is done with tasks({}/{}):".format(EN, NUMT, TOTAL_T))
+    for t in lists:
+        print("\t {}".format(t))
