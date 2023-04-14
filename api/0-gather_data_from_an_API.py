@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Module 0-gather_data_from_an_API
+gather_data_from_an_API
 """
 if __name__ == "__main__":
     import requests
